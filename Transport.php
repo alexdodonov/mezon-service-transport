@@ -2,8 +2,7 @@
 namespace Mezon\Service;
 
 use Mezon\Transport\RequestParamsInterface;
-use Mezon\Service\ServiceLogic;
-use Mezon\Service\ServiceBaseLogicInterface;
+use Mezon\Security\AuthenticationProviderInterface;
 
 /**
  * Base class for all transports
@@ -20,7 +19,7 @@ use Mezon\Service\ServiceBaseLogicInterface;
  *
  * @author Dodonov A.A.
  */
-abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterface
+abstract class Transport implements TransportInterface
 {
 
     /**
@@ -46,8 +45,8 @@ abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterf
 
     /**
      * Security provider
-     * 
-     * @var \Mezon\Service\ServiceAuthenticationSecurityProviderInterface
+     *
+     * @var AuthenticationProviderInterface
      */
     private $securityProvider = null;
 
@@ -236,10 +235,7 @@ abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterf
      *            Logic's parameters
      * @return mixed Result of the called method
      */
-    public function callPublicLogic(
-        ServiceBaseLogicInterface $serviceLogic,
-        string $method,
-        array $params = [])
+    public function callPublicLogic(ServiceBaseLogicInterface $serviceLogic, string $method, array $params = [])
     {
         try {
             return call_user_func_array([
@@ -407,9 +403,9 @@ abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterf
     /**
      * Method constructs request data fetcher
      *
-     * @return \Mezon\Service\ServiceRequestParamsInterface Request data fetcher
+     * @return RequestParamsInterface Request data fetcher
      */
-    public function getParamsFetcher(): \Mezon\Service\ServiceRequestParamsInterface
+    public function getParamsFetcher(): RequestParamsInterface
     {
         if ($this->paramsFetcher !== false) {
             return $this->paramsFetcher;
@@ -421,10 +417,10 @@ abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterf
     /**
      * Method constructs request data fetcher
      *
-     * @param \Mezon\Service\ServiceRequestParamsInterface $paramsFetcher
+     * @param RequestParamsInterface $paramsFetcher
      *            Request data fetcher
      */
-    public function setParamsFetcher(\Mezon\Service\ServiceRequestParamsInterface $paramsFetcher): void
+    public function setParamsFetcher(RequestParamsInterface $paramsFetcher): void
     {
         $this->paramsFetcher = $paramsFetcher;
     }
@@ -464,10 +460,10 @@ abstract class ServiceTransport implements \Mezon\Service\ServiceTransportInterf
 
     /**
      * Method returns security provider
-     * 
-     * @return \Mezon\Service\ServiceAuthenticationSecurityProviderInterface
+     *
+     * @return AuthenticationProviderInterface
      */
-    public function getSecurityProvider():\Mezon\Service\ServiceAuthenticationSecurityProviderInterface
+    public function getSecurityProvider(): AuthenticationProviderInterface
     {
         return $this->securityProvider;
     }

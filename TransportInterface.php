@@ -1,6 +1,8 @@
 <?php
 namespace Mezon\Service;
 
+use Mezon\Transport\RequestParamsInterface;
+
 /**
  * Interface ServiceTransportInterface
  *
@@ -16,13 +18,13 @@ namespace Mezon\Service;
  *
  * @author Dodonov A.A.
  */
-interface ServiceTransportInterface
+interface TransportInterface
 {
 
     /**
      * Method creates parameters fetcher
      *
-     * @return \Mezon\Service\ServiceRequestParamsInterface paremeters fetcher
+     * @return RequestParamsInterface paremeters fetcher
      */
-    public function createFetcher(): \Mezon\Service\ServiceRequestParamsInterface;
+    public function createFetcher(): RequestParamsInterface;
 }

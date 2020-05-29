@@ -1,10 +1,14 @@
 <?php
+namespace Mezon\Service\Tests;
+
 define('MEZON_DEBUG', true);
 
 use Mezon\Transport\RequestParamsInterface;
 use Mezon\Service\ServiceBaseLogicInterface;
 use Mezon\Service\ServiceLogic;
-use Mezon\Service\ServiceTransport;
+use Mezon\Service\Transport;
+use Mezon\Router\Router;
+use Mezon\Security\MockProvider;
 
 /**
  * Tests for the class ServiceTransport.
@@ -27,7 +31,7 @@ class ConcreteFetcher implements RequestParamsInterface
     }
 }
 
-class ConcreteServiceTransport extends ServiceTransport
+class ConcreteServiceTransport extends Transport
 {
 
     public function createFetcher(): RequestParamsInterface
@@ -48,12 +52,14 @@ class ConcreteServiceTransport extends ServiceTransport
  */
 class FakeServiceLogic extends ServiceLogic
 {
+    
+    var $transport;
 
-    public function __construct(\Mezon\Router\Router &$router)
+    public function __construct(Router &$router)
     {
-        parent::__construct(
-            new \Mezon\Service\ServiceHttpTransport\HttpRequestParams($router),
-            new \Mezon\Service\ServiceMockSecurityProvider());
+        $this->transport = new ConcreteServiceTransport($router);
+
+        parent::__construct($this->transport->createFetcher(), new MockProvider());
     }
 
     public function test()
@@ -76,7 +82,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
     {
         $serviceTransport = new ConcreteServiceTransport();
 
-        $this->assertInstanceOf(\Mezon\Router\Router::class, $serviceTransport->getRouter(), 'Router was not created');
+        $this->assertInstanceOf(Router::class, $serviceTransport->getRouter(), 'Router was not created');
     }
 
     /**
@@ -160,7 +166,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
         $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
 
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $serviceTransport->addRoute('unexisting', 'unexisting', 'GET');
     }
 
@@ -171,7 +177,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport();
-        $exception = new Exception('Error message', - 1);
+        $exception = new \Exception('Error message', - 1);
 
         // test body
         $format = $serviceTransport->errorResponse($exception);
@@ -193,7 +199,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
         ])
             ->getMock();
         $serviceTransport->method('isDebug')->willReturn(false);
-        $exception = new Exception('Error message', - 1);
+        $exception = new \Exception('Error message', - 1);
 
         // test body
         $format = $serviceTransport->errorResponse($exception);
@@ -260,7 +266,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
         $serviceTransport->setServiceLogic(null);
 
         // test body
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         $serviceTransport->loadRoute($route);
     }
 

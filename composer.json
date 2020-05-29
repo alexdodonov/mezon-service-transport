@@ -1,5 +1,5 @@
 {
-	"name": "mezon/transport",
+	"name": "mezon/service-transport",
 	"description": "Basic transport class for services and applications",
 	"license": "MIT",
 	"authors": [
@@ -19,19 +19,22 @@
 	},
 	"support": {
 		"email": "alexey@dodonov.pro",
-		"issues": "https://github.com/alexdodonov/mezon-transport/issues",
-		"source": "https://github.com/alexdodonov/mezon-transport"
+		"issues": "https://github.com/alexdodonov/mezon-service-transport/issues",
+		"source": "https://github.com/alexdodonov/mezon-service-transport"
 	},
 	"minimum-stability": "dev",
-	"homepage": "https://github.com/alexdodonov/mezon-transport",
+	"homepage": "https://github.com/alexdodonov/mezon-service-transport",
 	"prefer-stable": true,
 	"autoload": {
 		"psr-4": {
-			"Mezon\\Transport\\": ""
+			"Mezon\\Service\\": ""
 		}
 	},
 	"scripts": {
 		"post-update-cmd": "php ./vendor/phpunit/phpunit/phpunit",
-		"test": "php ./vendor/phpunit/phpunit/phpunit"
+		"test": [
+			"php ./vendor/phpunit/phpunit/phpunit",
+			"composer dump-autoload -o"
+		]
 	}
 }
