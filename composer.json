@@ -1,0 +1,37 @@
+{
+	"name": "mezon/transport",
+	"description": "Basic transport class for services and applications",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Dodonov Alexey",
+			"email": "alexey@dodonov.pro",
+			"homepage": "http://gdzone.ru",
+			"role": "Founder"
+		}
+	],
+	"require": {
+		"php": ">=7.2.0",
+		"mezon/router": "^1.0",
+		"mezon/request-params": "^1.0",
+		"phpunit/phpunit": "^8.5",
+		"mezon/service-logic": "^1.0"
+	},
+	"support": {
+		"email": "alexey@dodonov.pro",
+		"issues": "https://github.com/alexdodonov/mezon-transport/issues",
+		"source": "https://github.com/alexdodonov/mezon-transport"
+	},
+	"minimum-stability": "dev",
+	"homepage": "https://github.com/alexdodonov/mezon-transport",
+	"prefer-stable": true,
+	"autoload": {
+		"psr-4": {
+			"Mezon\\Transport\\": ""
+		}
+	},
+	"scripts": {
+		"post-update-cmd": "php ./vendor/phpunit/phpunit/phpunit",
+		"test": "php ./vendor/phpunit/phpunit/phpunit"
+	}
+}
