@@ -52,7 +52,7 @@ class ConcreteServiceTransport extends Transport
  */
 class FakeServiceLogic extends ServiceLogic
 {
-    
+
     var $transport;
 
     public function __construct(Router &$router)
@@ -74,6 +74,14 @@ class FakeServiceLogic extends ServiceLogic
  */
 class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
 {
+
+    /**
+     * Setup request method
+     */
+    public static function setUpBeforeClass(): void
+    {
+        $_REQUEST['REQUEST_METHOD'] = 'GET';
+    }
 
     /**
      * Testing constructor.

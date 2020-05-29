@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1547aa9d621900cb8d8367733ebd2ba",
+    "content-hash": "062edf0319f6164f570847a6eb72706a",
     "packages": [
         {
             "name": "doctrine/instantiator",
@@ -341,16 +341,16 @@
         },
         {
             "name": "mezon/service-logic",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alexdodonov/mezon-service-logic.git",
-                "reference": "55f7976053a55c895c788c9c91f68f19ee7314c7"
+                "reference": "bdc59485a72fd6b0ae141f2038938a9fbaef602f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alexdodonov/mezon-service-logic/zipball/55f7976053a55c895c788c9c91f68f19ee7314c7",
-                "reference": "55f7976053a55c895c788c9c91f68f19ee7314c7",
+                "url": "https://api.github.com/repos/alexdodonov/mezon-service-logic/zipball/bdc59485a72fd6b0ae141f2038938a9fbaef602f",
+                "reference": "bdc59485a72fd6b0ae141f2038938a9fbaef602f",
                 "shasum": ""
             },
             "require": {
@@ -380,7 +380,7 @@
             ],
             "description": "Small service logic script",
             "homepage": "https://github.com/alexdodonov/mezon-service-logic",
-            "time": "2020-05-28T13:52:59+00:00"
+            "time": "2020-05-29T09:44:51+00:00"
         },
         {
             "name": "mezon/service-model",
