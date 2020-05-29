@@ -80,7 +80,7 @@ class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $_REQUEST['REQUEST_METHOD'] = 'GET';
+        $_SERVER['REQUEST_METHOD'] = 'GET';
     }
 
     /**
