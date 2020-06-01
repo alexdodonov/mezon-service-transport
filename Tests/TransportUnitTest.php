@@ -72,7 +72,7 @@ class FakeServiceLogic extends ServiceLogic
  *
  * @author Dodonov A.A.
  */
-class ServiceTransportUnitTest extends \PHPUnit\Framework\TestCase
+class TransportUnitTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
