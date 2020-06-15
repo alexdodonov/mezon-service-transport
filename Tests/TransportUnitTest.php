@@ -3,70 +3,7 @@ namespace Mezon\Service\Tests;
 
 define('MEZON_DEBUG', true);
 
-use Mezon\Transport\RequestParamsInterface;
-use Mezon\Service\ServiceBaseLogicInterface;
-use Mezon\Service\ServiceLogic;
-use Mezon\Service\Transport;
 use Mezon\Router\Router;
-use Mezon\Security\MockProvider;
-
-/**
- * Tests for the class ServiceTransport.
- */
-class FakeService implements ServiceBaseLogicInterface
-{
-
-    public function actionHelloWorld()
-    {
-        return 1;
-    }
-}
-
-class ConcreteFetcher implements RequestParamsInterface
-{
-
-    public function getParam($param, $default = false)
-    {
-        return 1;
-    }
-}
-
-class ConcreteServiceTransport extends Transport
-{
-
-    public function createFetcher(): RequestParamsInterface
-    {
-        return new ConcreteFetcher();
-    }
-
-    public function createSession(string $token): string
-    {
-        return $token;
-    }
-}
-
-/**
- * Fake service logic.
- *
- * @author Dodonov A.A.
- */
-class FakeServiceLogic extends ServiceLogic
-{
-
-    var $transport;
-
-    public function __construct(Router &$router)
-    {
-        $this->transport = new ConcreteServiceTransport($router);
-
-        parent::__construct($this->transport->createFetcher(), new MockProvider());
-    }
-
-    public function test()
-    {
-        return 'test';
-    }
-}
 
 /**
  *
