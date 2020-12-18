@@ -15,9 +15,9 @@
 	},
 	"require": {
 		"php": ">=7.2.0",
-		"mezon/router": "^1.0",
-		"mezon/request-params": "^1.0",
-		"mezon/service-logic": "^1.0"
+		"mezon/router": "1.2.*",
+		"mezon/request-params": "1.0.*",
+		"mezon/service-logic": "1.0.*"
 	},
 	"support": {
 		"email": "alexey@dodonov.pro",
