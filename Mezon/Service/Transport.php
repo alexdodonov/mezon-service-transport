@@ -499,4 +499,14 @@ abstract class Transport implements TransportInterface
     {
         return $this->securityProvider;
     }
+
+    /**
+     * Method returns list of user logics
+     *
+     * @return ServiceBaseLogicInterface[]
+     */
+    public function getServiceLogics(): array
+    {
+        return $this->serviceLogics;
+    }
 }
