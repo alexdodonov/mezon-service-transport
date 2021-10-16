@@ -4,10 +4,15 @@ namespace Mezon\Service\Tests;
 define('MEZON_DEBUG', true);
 
 use Mezon\Router\Router;
+use Mezon\Service\ServiceLogic;
+use Mezon\Transport\Tests\MockParamsFetcher;
+use Mezon\Security\MockProvider;
+use Mezon\Service\ServiceModel;
 
 /**
  *
  * @author Dodonov A.A.
+ * @psalm-suppress PropertyNotSetInConstructor
  */
 class TransportUnitTest extends \PHPUnit\Framework\TestCase
 {
@@ -25,7 +30,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     public function testConstructor(): void
     {
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
 
         $this->assertInstanceOf(Router::class, $serviceTransport->getRouter(), 'Router was not created');
     }
@@ -35,7 +40,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetServiceLogic(): void
     {
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
         $serviceTransport->addRoute('test', 'test', 'GET');
 
@@ -49,7 +54,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetServiceLogicPublic(): void
     {
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
         $serviceTransport->addRoute('test', 'test', 'GET', 'public_call');
 
@@ -67,8 +72,8 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     protected function setupTransportWithArray(string $method): string
     {
-        $serviceTransport = new ConcreteServiceTransport();
-        $serviceTransport->setServiceLogic([
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport->setServiceLogics([
             new FakeServiceLogic($serviceTransport->getRouter())
         ]);
         $serviceTransport->addRoute('test', $method, 'GET');
@@ -108,7 +113,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetServiceLogicWithUnexistingMethod(): void
     {
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
 
         $this->expectException(\Exception::class);
@@ -121,7 +126,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testFormatCallStackDebug(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $exception = new \Exception('Error message', - 1);
 
         // test body
@@ -139,7 +144,10 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     {
         // setup
         $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setMethods([
+            ->setConstructorArgs([
+            new MockProvider()
+        ])
+            ->onlyMethods([
             'isDebug'
         ])
             ->getMock();
@@ -186,7 +194,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testLadRoute(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
 
         // test body
@@ -207,8 +215,9 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testInvalidLoadRoute(array $route): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
-        $serviceTransport->setServiceLogic(null);
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport->setServiceLogic(
+            new ServiceLogic(new MockParamsFetcher(), new MockProvider(), new ServiceModel()));
 
         // test body
         $this->expectException(\Exception::class);
@@ -221,7 +230,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testLoadRoutes(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
 
         // test body
@@ -242,7 +251,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testFetchActions(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
 
         // test body
@@ -258,7 +267,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testGetParam(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
 
         // test body and assertions
         $this->assertEquals(1, $serviceTransport->getParam('param'));
@@ -271,7 +280,10 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     {
         // setup and assertions
         $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setMethods([
+            ->setConstructorArgs([
+            new MockProvider()
+        ])
+            ->onlyMethods([
             'handleException'
         ])
             ->getMock();
@@ -291,7 +303,10 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     {
         // setup
         $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setMethods([
+            ->setConstructorArgs([
+            new MockProvider()
+        ])
+            ->onlyMethods([
             'createSession'
         ])
             ->getMock();
@@ -311,7 +326,7 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     public function testExceptionWhileRoutesLoading(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport();
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
 
         // assertions
         $this->expectException(\Exception::class);

@@ -4,6 +4,7 @@ namespace Mezon\Service\Tests;
 use Mezon\Service\ServiceLogic;
 use Mezon\Router\Router;
 use Mezon\Security\MockProvider;
+use Mezon\Service\ServiceModel;
 
 /**
  * Fake service logic.
@@ -13,16 +14,21 @@ use Mezon\Security\MockProvider;
 class FakeServiceLogic extends ServiceLogic
 {
 
+    /**
+     * Some fake transport
+     *
+     * @var ConcreteServiceTransport
+     */
     var $transport;
 
     public function __construct(Router &$router)
     {
-        $this->transport = new ConcreteServiceTransport($router);
+        $this->transport = new ConcreteServiceTransport(new MockProvider());
 
-        parent::__construct($this->transport->createFetcher(), new MockProvider());
+        parent::__construct($this->transport->createFetcher(), new MockProvider(), new ServiceModel());
     }
 
-    public function test()
+    public function test(): string
     {
         return 'test';
     }
