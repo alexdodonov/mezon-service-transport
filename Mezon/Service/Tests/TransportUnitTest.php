@@ -162,90 +162,6 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider
-     *
-     * @return string[][][] Data set
-     */
-    public function dataProviderForTestInvalidLoadRoute()
-    {
-        return [
-            [
-                [
-                    'route' => '/route/',
-                    'callback' => 'test'
-                ]
-            ],
-            [
-                [
-                    'route' => '/route/'
-                ]
-            ],
-            [
-                [
-                    'callback' => 'test'
-                ]
-            ]
-        ];
-    }
-
-    /**
-     * Testing 'load_route' method
-     */
-    public function testLadRoute(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-
-        // test body
-        $serviceTransport->loadRoute([
-            'route' => '/route/',
-            'callback' => 'test'
-        ]);
-
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-
-    /**
-     * Testing 'loadRoute' method with unexisting logic
-     *
-     * @dataProvider dataProviderForTestInvalidLoadRoute
-     */
-    public function testInvalidLoadRoute(array $route): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(
-            new ServiceLogic(new MockParamsFetcher(), new MockProvider(), new ServiceModel()));
-
-        // test body
-        $this->expectException(\Exception::class);
-        $serviceTransport->loadRoute($route);
-    }
-
-    /**
-     * Testing load_routes method
-     */
-    public function testLoadRoutes(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-
-        // test body
-        $serviceTransport->loadRoutes([
-            [
-                'route' => '/route/',
-                'callback' => 'test'
-            ]
-        ]);
-
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-
-    /**
      * Testing fetchActions method
      */
     public function testFetchActions(): void
@@ -318,20 +234,5 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
         // assertions
         $this->assertTrue(isset($result['message']));
         $this->assertTrue(isset($result['code']));
-    }
-
-    /**
-     * Testing exception throwing while routes loading
-     */
-    public function testExceptionWhileRoutesLoading(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-
-        // assertions
-        $this->expectException(\Exception::class);
-
-        // test body
-        $serviceTransport->loadRoutesFromConfig('path-to-unexisting-file');
     }
 }

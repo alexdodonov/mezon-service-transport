@@ -3,6 +3,8 @@ namespace Mezon\Service;
 
 use Mezon\Transport\RequestParamsInterface;
 use Mezon\Security\AuthenticationProviderInterface;
+use Mezon\Security\AuthorizationProviderInterface;
+use Mezon\Security\ProviderInterface;
 use Mezon\Router\Router;
 use Mezon\Router\Utils;
 
@@ -48,17 +50,17 @@ abstract class Transport implements TransportInterface
     /**
      * Security provider
      *
-     * @var AuthenticationProviderInterface
+     * @var ProviderInterface
      */
     private $securityProvider;
 
     /**
      * Constructor
      *
-     * @param AuthenticationProviderInterface $securityProvider
+     * @param ProviderInterface $securityProvider
      *            Security provider
      */
-    public function __construct(AuthenticationProviderInterface $securityProvider)
+    public function __construct(ProviderInterface $securityProvider)
     {
         $this->router = new Router();
 
@@ -493,11 +495,39 @@ abstract class Transport implements TransportInterface
     /**
      * Method returns security provider
      *
-     * @return AuthenticationProviderInterface
+     * @return ProviderInterface authentication provider
      */
-    public function getSecurityProvider(): AuthenticationProviderInterface
+    public function getSecurityProvider(): ProviderInterface
     {
         return $this->securityProvider;
+    }
+
+    /**
+     * Method returns authentication security provider
+     *
+     * @return AuthenticationProviderInterface authentication provider
+     */
+    public function getAuthenticationProvider(): AuthenticationProviderInterface
+    {
+        if ($this->securityProvider instanceof AuthenticationProviderInterface) {
+            return $this->securityProvider;
+        }
+
+        throw (new \Exception('$this->securityProvider must be instance of the AuthenticationProviderInterface', - 1));
+    }
+
+    /**
+     * Method returns authorization security provider
+     *
+     * @return AuthorizationProviderInterface authentication provider
+     */
+    public function getAuthorizationProvider(): AuthorizationProviderInterface
+    {
+        if ($this->securityProvider instanceof AuthorizationProviderInterface) {
+            return $this->securityProvider;
+        }
+
+        throw (new \Exception('$this->securityProvider must be instance of the AuthorizationProviderInterface', - 1));
     }
 
     /**
