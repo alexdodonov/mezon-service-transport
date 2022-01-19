@@ -3,7 +3,6 @@ namespace Mezon\Service\Tests;
 
 use Mezon\Security\MockProvider;
 use PHPUnit\Framework\TestCase;
-use Mezon\Service\ServiceBaseLogic;
 
 /**
  *
@@ -14,23 +13,19 @@ class GetLogicsUnitTest extends TestCase
 {
 
     /**
-     * Testing method
+     * Testing method getLogics
      */
-    public function testGetLogics(): void
+    public function testGetLogis(): void
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-
-        $serviceLogic = new ServiceBaseLogic(
-            $serviceTransport->getParamsFetcher(),
-            $serviceTransport->getSecurityProvider());
-
-        $serviceTransport->setServiceLogic($serviceLogic);
+        $serviceTransport->setServiceLogic($fakeLogic = new FakeServiceLogic($serviceTransport->getRouter()));
 
         // test body
-        $fetchedLogic = $serviceTransport->getServiceLogics()[0];
+        $logics = $serviceTransport->getServiceLogics();
 
         // assertions
-        $this->assertEquals($serviceLogic, $fetchedLogic);
+        $this->assertCount(1, $logics);
+        $this->assertEquals($fakeLogic, $logics[0]);
     }
 }

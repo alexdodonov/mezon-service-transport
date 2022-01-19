@@ -163,33 +163,6 @@ class TransportUnitTest extends TestCase
     }
 
     /**
-     * Data provider
-     *
-     * @return string[][][] Data set
-     */
-    public function dataProviderForTestInvalidLoadRoute()
-    {
-        return [
-            [
-                [
-                    'route' => '/route/',
-                    'callback' => 'test'
-                ]
-            ],
-            [
-                [
-                    'route' => '/route/'
-                ]
-            ],
-            [
-                [
-                    'callback' => 'test'
-                ]
-            ]
-        ];
-    }
-
-    /**
      * Testing fetchActions method
      */
     public function testFetchActions(): void
@@ -238,20 +211,5 @@ class TransportUnitTest extends TestCase
         ob_start();
         $serviceTransport->getRouter()->callRoute('/unexisting/');
         ob_end_clean();
-    }
-
-    /**
-     * Testing exception throwing while routes loading
-     */
-    public function testExceptionWhileRoutesLoading(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-
-        // assertions
-        $this->expectException(\Exception::class);
-
-        // test body
-        $serviceTransport->loadRoutesFromConfig('path-to-unexisting-file');
     }
 }
