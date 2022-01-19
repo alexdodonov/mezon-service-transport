@@ -1,26 +1,27 @@
 <?php
 namespace Mezon\Service\Tests;
 
+// TODO remove this shit
 define('MEZON_DEBUG', true);
 
 use Mezon\Router\Router;
-use Mezon\Service\ServiceLogic;
-use Mezon\Transport\Tests\MockParamsFetcher;
 use Mezon\Security\MockProvider;
-use Mezon\Service\ServiceModel;
+use PHPUnit\Framework\TestCase;
 
 /**
  *
  * @author Dodonov A.A.
  * @psalm-suppress PropertyNotSetInConstructor
  */
-class TransportUnitTest extends \PHPUnit\Framework\TestCase
+class TransportUnitTest extends TestCase
 {
 
     /**
-     * Setup request method
+     *
+     * {@inheritdoc}
+     * @see TestCase::setUp()
      */
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
     }
@@ -189,63 +190,6 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Testing 'load_route' method
-     */
-    public function testLadRoute(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-
-        // test body
-        $serviceTransport->loadRoute([
-            'route' => '/route/',
-            'callback' => 'test'
-        ]);
-
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-
-    /**
-     * Testing 'loadRoute' method with unexisting logic
-     *
-     * @dataProvider dataProviderForTestInvalidLoadRoute
-     */
-    public function testInvalidLoadRoute(array $route): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(
-            new ServiceLogic(new MockParamsFetcher(), new MockProvider(), new ServiceModel()));
-
-        // test body
-        $this->expectException(\Exception::class);
-        $serviceTransport->loadRoute($route);
-    }
-
-    /**
-     * Testing load_routes method
-     */
-    public function testLoadRoutes(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-
-        // test body
-        $serviceTransport->loadRoutes([
-            [
-                'route' => '/route/',
-                'callback' => 'test'
-            ]
-        ]);
-
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-
-    /**
      * Testing fetchActions method
      */
     public function testFetchActions(): void
@@ -294,30 +238,6 @@ class TransportUnitTest extends \PHPUnit\Framework\TestCase
         ob_start();
         $serviceTransport->getRouter()->callRoute('/unexisting/');
         ob_end_clean();
-    }
-
-    /**
-     * Testing exception handling
-     */
-    public function testExceptionHandle(): void
-    {
-        // setup
-        $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setConstructorArgs([
-            new MockProvider()
-        ])
-            ->onlyMethods([
-            'createSession'
-        ])
-            ->getMock();
-        $serviceTransport->method('createSession')->will($this->throwException(new \Exception()));
-
-        // test body
-        $result = $serviceTransport->callLogic(new FakeServiceLogic($serviceTransport->getRouter()), 'some-method');
-
-        // assertions
-        $this->assertTrue(isset($result['message']));
-        $this->assertTrue(isset($result['code']));
     }
 
     /**
