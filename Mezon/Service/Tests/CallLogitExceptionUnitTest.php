@@ -63,7 +63,7 @@ class CallLogitExceptionUnitTest extends TestCase
         $serviceTransport = $this->buildServiceTransport();
 
         // test body
-        $result = $serviceTransport->callLogic(new FakeServiceLogic($serviceTransport->getRouter()), 'some-method');
+        $result = $serviceTransport->callLogic(new FakeServiceLogic(), 'some-method');
 
         // assertions
         $this->assertResult($result);
@@ -78,7 +78,7 @@ class CallLogitExceptionUnitTest extends TestCase
         $serviceTransport = $this->buildServiceTransport();
 
         // test body
-        $result = $serviceTransport->callPublicLogic(new FakeServiceLogic($serviceTransport->getRouter()), 'some-method');
+        $result = $serviceTransport->callPublicLogic(new FakeServiceLogic(), 'some-method');
 
         // assertions
         $this->assertResult($result);

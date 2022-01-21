@@ -42,7 +42,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogic(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
         $serviceTransport->addRoute('test', 'test', 'GET');
 
         $result = $serviceTransport->getRouter()->callRoute('test');
@@ -56,7 +56,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogicPublic(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
         $serviceTransport->addRoute('test', 'test', 'GET', 'public_call');
 
         $result = $serviceTransport->getRouter()->callRoute('test');
@@ -75,7 +75,7 @@ class TransportUnitTest extends TestCase
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogics([
-            new FakeServiceLogic($serviceTransport->getRouter())
+            new FakeServiceLogic()
         ]);
         $serviceTransport->addRoute('test', $method, 'GET');
 
@@ -115,7 +115,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogicWithUnexistingMethod(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         $this->expectException(\Exception::class);
         $serviceTransport->addRoute('unexisting', 'unexisting', 'GET');
@@ -169,7 +169,7 @@ class TransportUnitTest extends TestCase
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         // test body
         $serviceTransport->fetchActions(new FakeService());

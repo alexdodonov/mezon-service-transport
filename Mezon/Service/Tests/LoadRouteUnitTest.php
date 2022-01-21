@@ -32,7 +32,7 @@ class LoadRouteUnitTest extends TestCase
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         // test body
         $serviceTransport->loadRoute([
