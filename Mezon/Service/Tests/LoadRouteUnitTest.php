@@ -16,6 +16,35 @@ class LoadRouteUnitTest extends TestCase
 {
 
     /**
+     *
+     * {@inheritdoc}
+     * @see TestCase::setUp()
+     */
+    protected function setUp(): void
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+    }
+
+    /**
+     * Testing 'load_route' method
+     */
+    public function testLoadRoute(): void
+    {
+        // setup
+        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
+
+        // test body
+        $serviceTransport->loadRoute([
+            'route' => '/route/',
+            'callback' => 'test'
+        ]);
+
+        // assertions
+        $this->assertTrue($serviceTransport->routeExists('/route/'));
+    }
+
+    /**
      * Data provider
      *
      * @return string[][][] Data set
@@ -43,46 +72,6 @@ class LoadRouteUnitTest extends TestCase
     }
 
     /**
-     * Testing 'loadRoute' method
-     */
-    public function testLoadRoute(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-
-        // test body
-        $serviceTransport->loadRoute([
-            'route' => '/route/',
-            'callback' => 'test'
-        ]);
-
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-    
-    /**
-     * Testing loadRoutes method
-     */
-    public function testLoadRoutes(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
-        
-        // test body
-        $serviceTransport->loadRoutes([
-            [
-                'route' => '/route/',
-                'callback' => 'test'
-            ]
-        ]);
-        
-        // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
-    }
-
-    /**
      * Testing 'loadRoute' method with unexisting logic
      *
      * @dataProvider dataProviderForTestInvalidLoadRoute
@@ -97,20 +86,5 @@ class LoadRouteUnitTest extends TestCase
         // test body
         $this->expectException(\Exception::class);
         $serviceTransport->loadRoute($route);
-    }
-
-    /**
-     * Testing exception throwing while routes loading
-     */
-    public function testExceptionWhileRoutesLoading(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-
-        // assertions
-        $this->expectException(\Exception::class);
-
-        // test body
-        $serviceTransport->loadRoutesFromConfig('path-to-unexisting-file');
     }
 }

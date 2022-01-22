@@ -17,9 +17,11 @@ class TransportUnitTest extends TestCase
 {
 
     /**
-     * Setup request method
+     *
+     * {@inheritdoc}
+     * @see TestCase::setUp()
      */
-    public static function setUpBeforeClass(): void
+    protected function setUp(): void
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
     }
@@ -40,7 +42,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogic(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
         $serviceTransport->addRoute('test', 'test', 'GET');
 
         $result = $serviceTransport->getRouter()->callRoute('test');
@@ -54,7 +56,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogicPublic(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
         $serviceTransport->addRoute('test', 'test', 'GET', 'public_call');
 
         $result = $serviceTransport->getRouter()->callRoute('test');
@@ -73,7 +75,7 @@ class TransportUnitTest extends TestCase
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
         $serviceTransport->setServiceLogics([
-            new FakeServiceLogic($serviceTransport->getRouter())
+            new FakeServiceLogic()
         ]);
         $serviceTransport->addRoute('test', $method, 'GET');
 
@@ -113,7 +115,7 @@ class TransportUnitTest extends TestCase
     public function testGetServiceLogicWithUnexistingMethod(): void
     {
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         $this->expectException(\Exception::class);
         $serviceTransport->addRoute('unexisting', 'unexisting', 'GET');
@@ -167,7 +169,7 @@ class TransportUnitTest extends TestCase
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         // test body
         $serviceTransport->fetchActions(new FakeService());
@@ -209,29 +211,5 @@ class TransportUnitTest extends TestCase
         ob_start();
         $serviceTransport->getRouter()->callRoute('/unexisting/');
         ob_end_clean();
-    }
-
-    /**
-     * Testing exception handling
-     */
-    public function testExceptionHandle(): void
-    {
-        // setup
-        $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setConstructorArgs([
-            new MockProvider()
-        ])
-            ->onlyMethods([
-            'createSession'
-        ])
-            ->getMock();
-        $serviceTransport->method('createSession')->will($this->throwException(new \Exception()));
-
-        // test body
-        $result = $serviceTransport->callLogic(new FakeServiceLogic($serviceTransport->getRouter()), 'some-method');
-
-        // assertions
-        $this->assertTrue(isset($result['message']));
-        $this->assertTrue(isset($result['code']));
     }
 }

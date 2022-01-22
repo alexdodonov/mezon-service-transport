@@ -2,7 +2,6 @@
 namespace Mezon\Service\Tests;
 
 use Mezon\Service\ServiceLogic;
-use Mezon\Router\Router;
 use Mezon\Security\MockProvider;
 use Mezon\Service\ServiceModel;
 
@@ -21,7 +20,7 @@ class FakeServiceLogic extends ServiceLogic
      */
     var $transport;
 
-    public function __construct(Router &$router)
+    public function __construct()
     {
         $this->transport = new ConcreteServiceTransport(new MockProvider());
 

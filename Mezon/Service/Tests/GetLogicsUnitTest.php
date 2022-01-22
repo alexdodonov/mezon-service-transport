@@ -19,7 +19,7 @@ class GetLogicsUnitTest extends TestCase
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic($fakeLogic = new FakeServiceLogic($serviceTransport->getRouter()));
+        $serviceTransport->setServiceLogic($fakeLogic = new FakeServiceLogic());
 
         // test body
         $logics = $serviceTransport->getServiceLogics();
