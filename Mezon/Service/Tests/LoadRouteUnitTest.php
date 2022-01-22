@@ -1,7 +1,6 @@
 <?php
 namespace Mezon\Service\Tests;
 
-use Mezon\Router\Router;
 use Mezon\Service\ServiceLogic;
 use Mezon\Transport\Tests\MockParamsFetcher;
 use Mezon\Security\MockProvider;

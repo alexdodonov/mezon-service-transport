@@ -7,6 +7,7 @@ use Mezon\Security\AuthorizationProviderInterface;
 use Mezon\Security\ProviderInterface;
 use Mezon\Router\Router;
 use Mezon\Router\Utils;
+use Mezon\System\Layer;
 
 /**
  * Base class for all transports
@@ -334,16 +335,6 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method kills execution thread
-     *
-     * @codeCoverageIgnore
-     */
-    protected function die(): void
-    {
-        die(0);
-    }
-
-    /**
      * Method outputs exception data
      *
      * @param array $e
@@ -364,7 +355,7 @@ abstract class Transport implements TransportInterface
     {
         $this->outputException($this->errorResponse($e));
 
-        $this->die();
+        Layer::die();
     }
 
     /**

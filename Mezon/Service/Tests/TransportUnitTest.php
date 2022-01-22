@@ -1,20 +1,19 @@
 <?php
 namespace Mezon\Service\Tests;
 
+// TODO remove this crap
 define('MEZON_DEBUG', true);
 
 use Mezon\Router\Router;
-use Mezon\Service\ServiceLogic;
-use Mezon\Transport\Tests\MockParamsFetcher;
 use Mezon\Security\MockProvider;
-use Mezon\Service\ServiceModel;
+use PHPUnit\Framework\TestCase;
 
 /**
  *
  * @author Dodonov A.A.
  * @psalm-suppress PropertyNotSetInConstructor
  */
-class TransportUnitTest extends \PHPUnit\Framework\TestCase
+class TransportUnitTest extends TestCase
 {
 
     /**
