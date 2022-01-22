@@ -104,16 +104,9 @@ abstract class Transport implements TransportInterface
     public abstract function createSession(string $token): string;
 
     /**
-     * Method adds's route
-     *
-     * @param string $route
-     *            Route
-     * @param string $callback
-     *            Logic method to be called
-     * @param string|array $requestMethod
-     *            HTTP request method
-     * @param string $callType
-     *            Type of the call
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::addRoute()
      */
     public function addRoute(string $route, string $callback, $requestMethod, string $callType = 'callLogic'): void
     {
@@ -167,10 +160,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method loads routes
-     *
-     * @param array $routes
-     *            Route descriptions
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::loadRoutes()
      */
     public function loadRoutes(array $routes): void
     {
@@ -180,10 +172,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method loads routes from config file
-     *
-     * @param string $path
-     *            Path to the routes description
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::loadRoutesFromConfig()
      */
     public function loadRoutesFromConfig(string $path = './conf/routes.php'): void
     {
@@ -309,8 +300,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method runs router
-     *
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::run()
      * @codeCoverageIgnore
      */
     public function run(): void
@@ -345,10 +337,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method processes exception
-     *
-     * @param \Exception $e
-     *            Exception object
+     * 
+     * {@inheritDoc}
+     * @see \Mezon\Service\TransportInterface::handleException()
      * @codeCoverageIgnore
      */
     public function handleException($e): void
@@ -359,10 +350,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method fetches actions for routes
-     *
-     * @param ServiceBaseLogicInterface $actionsSource
-     *            Source of actions
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::fetchActions()
      */
     public function fetchActions(ServiceBaseLogicInterface $actionsSource): void
     {
@@ -439,7 +429,7 @@ abstract class Transport implements TransportInterface
     /**
      * Method returns router
      *
-     * @return \Mezon\Router\Router router
+     * @return Router router
      */
     public function &getRouter(): \Mezon\Router\Router
     {
@@ -522,9 +512,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method returns list of user logics
-     *
-     * @return ServiceBaseLogicInterface[]
+     * 
+     * {@inheritDoc}
+     * @see TransportInterface::getServiceLogics()
      */
     public function getServiceLogics(): array
     {
