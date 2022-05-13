@@ -1,7 +1,6 @@
 <?php
 namespace Mezon\Service\Tests;
 
-use Mezon\Security\MockProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -9,7 +8,7 @@ use PHPUnit\Framework\TestCase;
  * @author Dodonov A.A.
  * @psalm-suppress PropertyNotSetInConstructor
  */
-class LoadRoutesUnitTest extends TestCase
+class FormatCallStackUnitTest extends TestCase
 {
 
     /**
@@ -23,23 +22,19 @@ class LoadRoutesUnitTest extends TestCase
     }
 
     /**
-     * Testing loadRoutes method
+     * Testing call stack formatter
      */
-    public function testLoadRoutes(): void
+    public function testFormatCallStack(): void
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport();
-        $serviceTransport->setServiceLogic(new FakeServiceLogic());
+        $exception = new \Exception('Error message', - 1);
 
         // test body
-        $serviceTransport->loadRoutes([
-            [
-                'route' => '/route/',
-                'callback' => 'test'
-            ]
-        ]);
+        $format = $serviceTransport->errorResponse($exception);
 
         // assertions
-        $this->assertTrue($serviceTransport->routeExists('/route/'));
+        $this->assertEquals(3, count($format), 'Invalid formatter');
+        $this->assertTrue(isset($format['call_stack']));
     }
 }

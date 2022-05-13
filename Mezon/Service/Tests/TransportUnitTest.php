@@ -1,11 +1,7 @@
 <?php
 namespace Mezon\Service\Tests;
 
-// TODO remove this crap
-define('MEZON_DEBUG', true);
-
 use Mezon\Router\Router;
-use Mezon\Security\MockProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -31,7 +27,7 @@ class TransportUnitTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
 
         $this->assertInstanceOf(Router::class, $serviceTransport->getRouter(), 'Router was not created');
     }
@@ -41,7 +37,7 @@ class TransportUnitTest extends TestCase
      */
     public function testGetServiceLogic(): void
     {
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(new FakeServiceLogic());
         $serviceTransport->addRoute('test', 'test', 'GET');
 
@@ -51,115 +47,15 @@ class TransportUnitTest extends TestCase
     }
 
     /**
-     * Testing simple calling of the logic's method.
-     */
-    public function testGetServiceLogicPublic(): void
-    {
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogic(new FakeServiceLogic());
-        $serviceTransport->addRoute('test', 'test', 'GET', 'public_call');
-
-        $result = $serviceTransport->getRouter()->callRoute('test');
-
-        $this->assertEquals('test', $result, 'Invalid public route execution result');
-    }
-
-    /**
-     * Setup and run endpoint
-     *
-     * @param string $method
-     *            method to be called
-     * @return string result of the endpoint processing
-     */
-    protected function setupTransportWithArray(string $method): string
-    {
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $serviceTransport->setServiceLogics([
-            new FakeServiceLogic()
-        ]);
-        $serviceTransport->addRoute('test', $method, 'GET');
-
-        $_GET['r'] = 'test';
-        $_REQUEST['HTTP_METHOD'] = 'GET';
-        ob_start();
-        $serviceTransport->run();
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        return $output;
-    }
-
-    /**
-     * Testing calling of the logic's method from array
-     */
-    public function testGetServiceLogicFromArray(): void
-    {
-        $output = $this->setupTransportWithArray('test');
-
-        $this->assertEquals('test', $output, 'Invalid route execution result for multyple logics');
-    }
-
-    /**
-     * Testing calling of the logic's method from array
-     */
-    public function testGetServiceLogicFromArrayException(): void
-    {
-        $this->expectException(\Exception::class);
-
-        $this->setupTransportWithArray('unexisting-endpoint');
-    }
-
-    /**
      * Testing calling of the logic's method from array.
      */
     public function testGetServiceLogicWithUnexistingMethod(): void
     {
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         $this->expectException(\Exception::class);
         $serviceTransport->addRoute('unexisting', 'unexisting', 'GET');
-    }
-
-    /**
-     * Testing call stack formatter
-     */
-    public function testFormatCallStackDebug(): void
-    {
-        // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
-        $exception = new \Exception('Error message', - 1);
-
-        // test body
-        $format = $serviceTransport->errorResponse($exception);
-
-        // assertions
-        $this->assertEquals(3, count($format), 'Invalid formatter');
-        $this->assertTrue(isset($format['call_stack']));
-    }
-
-    /**
-     * Testing call stack formatter
-     */
-    public function testFormatCallStackRelease(): void
-    {
-        // setup
-        $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setConstructorArgs([
-            new MockProvider()
-        ])
-            ->onlyMethods([
-            'isDebug'
-        ])
-            ->getMock();
-        $serviceTransport->method('isDebug')->willReturn(false);
-        $exception = new \Exception('Error message', - 1);
-
-        // test body
-        $format = $serviceTransport->errorResponse($exception);
-
-        // assertions
-        $this->assertFalse(isset($format['call_stack']));
     }
 
     /**
@@ -168,7 +64,7 @@ class TransportUnitTest extends TestCase
     public function testFetchActions(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         // test body
@@ -184,7 +80,7 @@ class TransportUnitTest extends TestCase
     public function testGetParam(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
 
         // test body and assertions
         $this->assertEquals(1, $serviceTransport->getParam('param'));
@@ -197,9 +93,6 @@ class TransportUnitTest extends TestCase
     {
         // setup and assertions
         $serviceTransport = $this->getMockBuilder(ConcreteServiceTransport::class)
-            ->setConstructorArgs([
-            new MockProvider()
-        ])
             ->onlyMethods([
             'handleException'
         ])

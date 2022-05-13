@@ -31,7 +31,7 @@ class LoadRouteUnitTest extends TestCase
     public function testLoadRoute(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(new FakeServiceLogic());
 
         // test body
@@ -79,7 +79,7 @@ class LoadRouteUnitTest extends TestCase
     public function testInvalidLoadRoute(array $route): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic(
             new ServiceLogic(new MockParamsFetcher(), new MockProvider(), new ServiceModel()));
 

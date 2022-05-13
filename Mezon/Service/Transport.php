@@ -2,9 +2,6 @@
 namespace Mezon\Service;
 
 use Mezon\Transport\RequestParamsInterface;
-use Mezon\Security\AuthenticationProviderInterface;
-use Mezon\Security\AuthorizationProviderInterface;
-use Mezon\Security\ProviderInterface;
 use Mezon\Router\Router;
 use Mezon\Router\Utils;
 use Mezon\System\Layer;
@@ -49,19 +46,9 @@ abstract class Transport implements TransportInterface
     private $router;
 
     /**
-     * Security provider
-     *
-     * @var ProviderInterface
-     */
-    private $securityProvider;
-
-    /**
      * Constructor
-     *
-     * @param ProviderInterface $securityProvider
-     *            Security provider
      */
-    public function __construct(ProviderInterface $securityProvider)
+    public function __construct()
     {
         $this->router = new Router();
 
@@ -71,16 +58,14 @@ abstract class Transport implements TransportInterface
 
                 $this->handleException($exception);
             });
-
-        $this->securityProvider = $securityProvider;
     }
 
     /**
      * Method searches necessary logic object
      *
      * @param string $method
-     *            Necessary method
-     * @return ServiceBaseLogicInterface Logic object
+     *            necessary method
+     * @return ServiceBaseLogicInterface logic object
      */
     protected function getNecessaryLogic(string $method): ServiceBaseLogicInterface
     {
@@ -94,56 +79,32 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method creates session
      *
-     * @param string $token
-     *            session token
-     * @param
-     *            string token
-     */
-    public abstract function createSession(string $token): string;
-
-    /**
-     * 
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @see TransportInterface::addRoute()
      */
-    public function addRoute(string $route, string $callback, $requestMethod, string $callType = 'callLogic'): void
+    public function addRoute(string $route, string $callback, $requestMethod): void
     {
         $localServiceLogic = $this->getNecessaryLogic($callback);
 
-        if ($callType == 'public_call') {
-            $this->router->addRoute(
-                $route,
-                /**
-                 * Route processing
-                 *
-                 * @return mixed route processing result
-                 */
-                function () use ($localServiceLogic, $callback) {
-                    return $this->callPublicLogic($localServiceLogic, $callback, []);
-                },
-                $requestMethod);
-        } else {
-            $this->router->addRoute(
-                $route,
-                /**
-                 * Route processing
-                 *
-                 * @return mixed route processing result
-                 */
-                function () use ($localServiceLogic, $callback) {
-                    return $this->callLogic($localServiceLogic, $callback, []);
-                },
-                $requestMethod);
-        }
+        $this->router->addRoute(
+            $route,
+            /**
+             * Route processing
+             *
+             * @return mixed route processing result
+             */
+            function () use ($localServiceLogic, $callback) {
+                return $this->callLogic($localServiceLogic, $callback, []);
+            },
+            $requestMethod);
     }
 
     /**
      * Method loads single route
      *
      * @param array $route
-     *            Route description
+     *            route description
      */
     public function loadRoute(array $route): void
     {
@@ -154,14 +115,13 @@ abstract class Transport implements TransportInterface
             throw (new \Exception('Field "callback" must be set'));
         }
         $method = isset($route['method']) ? $route['method'] : 'GET';
-        $callType = isset($route['call_type']) ? $route['call_type'] : 'callLogic';
 
-        $this->addRoute($route['route'], $route['callback'], $method, $callType);
+        $this->addRoute($route['route'], $route['callback'], $method);
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
      * @see TransportInterface::loadRoutes()
      */
     public function loadRoutes(array $routes): void
@@ -172,11 +132,11 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
      * @see TransportInterface::loadRoutesFromConfig()
      */
-    public function loadRoutesFromConfig(string $path = './conf/routes.php'): void
+    public function loadRoutesFromConfig(string $path = './Conf/Routes.php'): void
     {
         if (file_exists($path)) {
             $routes = (include ($path));
@@ -193,17 +153,14 @@ abstract class Transport implements TransportInterface
      * @param ServiceBaseLogicInterface $serviceLogic
      *            object with all service logic
      * @param string $method
-     *            Logic's method to be executed
+     *            logic's method to be executed
      * @param array $params
-     *            Logic's parameters
-     * @return mixed Result of the called method
+     *            logic's parameters
+     * @return mixed result of the called method
      */
     public function callLogic(ServiceBaseLogicInterface $serviceLogic, string $method, array $params = [])
     {
         try {
-            $params['SessionId'] = $this->createSession($this->getParamsFetcher()
-                ->getParam('session_id'));
-
             return call_user_func_array([
                 $serviceLogic,
                 $method
@@ -211,38 +168,6 @@ abstract class Transport implements TransportInterface
         } catch (\Exception $e) {
             return $this->errorResponse($e);
         }
-    }
-
-    /**
-     * Method runs logic functions
-     *
-     * @param ServiceBaseLogicInterface $serviceLogic
-     *            object with all service logic
-     * @param string $method
-     *            Logic's method to be executed
-     * @param array $params
-     *            Logic's parameters
-     * @return mixed Result of the called method
-     */
-    public function callPublicLogic(ServiceBaseLogicInterface $serviceLogic, string $method, array $params = [])
-    {
-        try {
-            return call_user_func_array([
-                $serviceLogic,
-                $method
-            ], $params);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e);
-        }
-    }
-
-    /**
-     * Method returns true if the debug omde is ON
-     */
-    protected function isDebug(): bool
-    {
-        // TODO try to remove this crap
-        return defined('MEZON_DEBUG') && MEZON_DEBUG === true;
     }
 
     /**
@@ -259,9 +184,7 @@ abstract class Transport implements TransportInterface
             'code' => $e->getCode()
         ];
 
-        if ($this->isDebug()) {
-            $result['call_stack'] = $this->formatCallStack($e);
-        }
+        $result['call_stack'] = $this->formatCallStack($e);
 
         return $result;
     }
@@ -300,8 +223,8 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
      * @see TransportInterface::run()
      * @codeCoverageIgnore
      */
@@ -337,9 +260,9 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * 
-     * {@inheritDoc}
-     * @see \Mezon\Service\TransportInterface::handleException()
+     *
+     * {@inheritdoc}
+     * @see TransportInterface::handleException()
      * @codeCoverageIgnore
      */
     public function handleException($e): void
@@ -350,8 +273,8 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * 
-     * {@inheritDoc}
+     *
+     * {@inheritdoc}
      * @see TransportInterface::fetchActions()
      */
     public function fetchActions(ServiceBaseLogicInterface $actionsSource): void
@@ -370,7 +293,7 @@ abstract class Transport implements TransportInterface
                      * @return mixed route processing result
                      */
                     function () use ($actionsSource, $method) {
-                        return $this->callPublicLogic($actionsSource, $method, []);
+                        return $this->callLogic($actionsSource, $method, []);
                     },
                     'GET');
 
@@ -382,7 +305,7 @@ abstract class Transport implements TransportInterface
                      * @return mixed route processing result
                      */
                     function () use ($actionsSource, $method) {
-                        return $this->callPublicLogic($actionsSource, $method, []);
+                        return $this->callLogic($actionsSource, $method, []);
                     },
                     'POST');
             }
@@ -392,7 +315,7 @@ abstract class Transport implements TransportInterface
     /**
      * Method constructs request data fetcher
      *
-     * @return RequestParamsInterface Request data fetcher
+     * @return RequestParamsInterface request data fetcher
      */
     public function getParamsFetcher(): RequestParamsInterface
     {
@@ -401,17 +324,6 @@ abstract class Transport implements TransportInterface
         }
 
         return $this->paramsFetcher = $this->createFetcher();
-    }
-
-    /**
-     * Method constructs request data fetcher
-     *
-     * @param RequestParamsInterface $paramsFetcher
-     *            Request data fetcher
-     */
-    public function setParamsFetcher(RequestParamsInterface $paramsFetcher): void
-    {
-        $this->paramsFetcher = $paramsFetcher;
     }
 
     /**
@@ -431,7 +343,7 @@ abstract class Transport implements TransportInterface
      *
      * @return Router router
      */
-    public function &getRouter(): \Mezon\Router\Router
+    public function &getRouter(): Router
     {
         return $this->router;
     }
@@ -474,50 +386,19 @@ abstract class Transport implements TransportInterface
     }
 
     /**
-     * Method returns security provider
      *
-     * @return ProviderInterface authentication provider
-     */
-    public function getSecurityProvider(): ProviderInterface
-    {
-        return $this->securityProvider;
-    }
-
-    /**
-     * Method returns authentication security provider
-     *
-     * @return AuthenticationProviderInterface authentication provider
-     */
-    public function getAuthenticationProvider(): AuthenticationProviderInterface
-    {
-        if ($this->securityProvider instanceof AuthenticationProviderInterface) {
-            return $this->securityProvider;
-        }
-
-        throw (new \Exception('$this->securityProvider must be instance of the AuthenticationProviderInterface', - 1));
-    }
-
-    /**
-     * Method returns authorization security provider
-     *
-     * @return AuthorizationProviderInterface authentication provider
-     */
-    public function getAuthorizationProvider(): AuthorizationProviderInterface
-    {
-        if ($this->securityProvider instanceof AuthorizationProviderInterface) {
-            return $this->securityProvider;
-        }
-
-        throw (new \Exception('$this->securityProvider must be instance of the AuthorizationProviderInterface', - 1));
-    }
-
-    /**
-     * 
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @see TransportInterface::getServiceLogics()
      */
     public function getServiceLogics(): array
     {
         return $this->serviceLogics;
     }
+
+    /**
+     * Method creates parameters fetcher
+     *
+     * @return RequestParamsInterface paremeters fetcher
+     */
+    protected abstract function createFetcher(): RequestParamsInterface;
 }

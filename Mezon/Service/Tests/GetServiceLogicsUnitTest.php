@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
  * @author Dodonov A.A.
  * @psalm-suppress PropertyNotSetInConstructor
  */
-class GetLogicsUnitTest extends TestCase
+class GetServiceLogicsUnitTest extends TestCase
 {
 
     /**
@@ -18,7 +18,7 @@ class GetLogicsUnitTest extends TestCase
     public function testGetLogis(): void
     {
         // setup
-        $serviceTransport = new ConcreteServiceTransport(new MockProvider());
+        $serviceTransport = new ConcreteServiceTransport();
         $serviceTransport->setServiceLogic($fakeLogic = new FakeServiceLogic());
 
         // test body

@@ -1,8 +1,6 @@
 <?php
 namespace Mezon\Service;
 
-use Mezon\Transport\RequestParamsInterface;
-
 /**
  * Interface ServiceTransportInterface
  *
@@ -22,13 +20,6 @@ interface TransportInterface
 {
 
     /**
-     * Method creates parameters fetcher
-     *
-     * @return RequestParamsInterface paremeters fetcher
-     */
-    public function createFetcher(): RequestParamsInterface;
-
-    /**
      * Method adds's route
      *
      * @param string $route
@@ -37,10 +28,8 @@ interface TransportInterface
      *            logic method to be called
      * @param string|array $requestMethod
      *            HTTP request method
-     * @param string $callType
-     *            type of the call
      */
-    public function addRoute(string $route, string $callback, $requestMethod, string $callType = 'callLogic'): void;
+    public function addRoute(string $route, string $callback, $requestMethod): void;
 
     /**
      * Method loads routes
@@ -62,7 +51,7 @@ interface TransportInterface
      * Method runs router
      */
     public function run(): void;
-    
+
     /**
      * Method processes exception
      *
@@ -70,7 +59,7 @@ interface TransportInterface
      *            Exception object
      */
     public function handleException($e): void;
-    
+
     /**
      * Method fetches actions for routes
      *
@@ -78,7 +67,7 @@ interface TransportInterface
      *            source of actions
      */
     public function fetchActions(ServiceBaseLogicInterface $actionsSource): void;
-    
+
     /**
      * Method returns list of user logics
      *
