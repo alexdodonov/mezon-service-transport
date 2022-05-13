@@ -175,6 +175,8 @@ abstract class Transport implements TransportInterface
     public function callPublicLogic(ServiceBaseLogic $serviceLogic, string $method, array $params = [])
     {
         // TODO do we need this method be public?
+        $this->logicCallPrepend();
+
         try {
             return call_user_func_array([
                 $serviceLogic,
@@ -184,6 +186,14 @@ abstract class Transport implements TransportInterface
             return $this->errorResponse($e);
         }
     }
+
+    /**
+     * This method is called before logic calls
+     *
+     * It is used in the derived classes ServiceHttpTransport and ServiceRestTransport to send HTTP headers
+     */
+    protected function logicCallPrepend(): void
+    {}
 
     /**
      * Method runs logic functions
@@ -200,6 +210,8 @@ abstract class Transport implements TransportInterface
     {
         // TODO add getSecurityProvider() to the ServiceBaseLogicInterface and use this interface here
         // TODO do we need this method be public?
+        $this->logicCallPrepend();
+
         try {
             $params['SessionId'] = $serviceLogic->getSecurityProvider()->createSession(
                 $this->getParamsFetcher()
