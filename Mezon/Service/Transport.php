@@ -34,7 +34,7 @@ abstract class Transport implements TransportInterface
     /**
      * Service's logic objects array
      *
-     * @var ServiceBaseLogicInterface[]
+     * @var ServiceBaseLogic[]
      */
     private $serviceLogics = [];
 
@@ -65,9 +65,9 @@ abstract class Transport implements TransportInterface
      *
      * @param string $method
      *            necessary method
-     * @return ServiceBaseLogicInterface logic object
+     * @return ServiceBaseLogic logic object
      */
-    protected function getNecessaryLogic(string $method): ServiceBaseLogicInterface
+    protected function getNecessaryLogic(string $method): ServiceBaseLogic
     {
         foreach ($this->serviceLogics as $logic) {
             if (method_exists($logic, $method)) {
@@ -83,21 +83,35 @@ abstract class Transport implements TransportInterface
      * {@inheritdoc}
      * @see TransportInterface::addRoute()
      */
-    public function addRoute(string $route, string $callback, $requestMethod): void
+    public function addRoute(string $route, string $callback, $requestMethod, string $callType = 'callLogic'): void
     {
         $localServiceLogic = $this->getNecessaryLogic($callback);
 
-        $this->router->addRoute(
-            $route,
-            /**
-             * Route processing
-             *
-             * @return mixed route processing result
-             */
-            function () use ($localServiceLogic, $callback) {
-                return $this->callLogic($localServiceLogic, $callback, []);
-            },
-            $requestMethod);
+        if ($callType == 'public_call') {
+            $this->router->addRoute(
+                $route,
+                /**
+                 * Route processing
+                 *
+                 * @return mixed route processing result
+                 */
+                function () use ($localServiceLogic, $callback) {
+                    return $this->callPublicLogic($localServiceLogic, $callback, []);
+                },
+                $requestMethod);
+        } else {
+            $this->router->addRoute(
+                $route,
+                /**
+                 * Route processing
+                 *
+                 * @return mixed route processing result
+                 */
+                function () use ($localServiceLogic, $callback) {
+                    return $this->callLogic($localServiceLogic, $callback, []);
+                },
+                $requestMethod);
+        }
     }
 
     /**
@@ -150,7 +164,7 @@ abstract class Transport implements TransportInterface
     /**
      * Method runs logic functions
      *
-     * @param ServiceBaseLogicInterface $serviceLogic
+     * @param ServiceBaseLogic $serviceLogic
      *            object with all service logic
      * @param string $method
      *            logic's method to be executed
@@ -158,9 +172,39 @@ abstract class Transport implements TransportInterface
      *            logic's parameters
      * @return mixed result of the called method
      */
-    public function callLogic(ServiceBaseLogicInterface $serviceLogic, string $method, array $params = [])
+    public function callPublicLogic(ServiceBaseLogic $serviceLogic, string $method, array $params = [])
     {
+        // TODO do we need this method be public?
         try {
+            return call_user_func_array([
+                $serviceLogic,
+                $method
+            ], $params);
+        } catch (\Exception $e) {
+            return $this->errorResponse($e);
+        }
+    }
+
+    /**
+     * Method runs logic functions
+     *
+     * @param ServiceBaseLogic $serviceLogic
+     *            object with all service logic
+     * @param string $method
+     *            logic's method to be executed
+     * @param array $params
+     *            logic's parameters
+     * @return mixed Result of the called method
+     */
+    public function callLogic(ServiceBaseLogic $serviceLogic, string $method, array $params = [])
+    {
+        // TODO add getSecurityProvider() to the ServiceBaseLogicInterface and use this interface here
+        // TODO do we need this method be public?
+        try {
+            $params['SessionId'] = $serviceLogic->getSecurityProvider()->createSession(
+                $this->getParamsFetcher()
+                    ->getParam('session_id'));
+
             return call_user_func_array([
                 $serviceLogic,
                 $method
@@ -277,7 +321,7 @@ abstract class Transport implements TransportInterface
      * {@inheritdoc}
      * @see TransportInterface::fetchActions()
      */
-    public function fetchActions(ServiceBaseLogicInterface $actionsSource): void
+    public function fetchActions(ServiceBaseLogic $actionsSource): void
     {
         $methods = get_class_methods($actionsSource);
 
@@ -293,7 +337,7 @@ abstract class Transport implements TransportInterface
                      * @return mixed route processing result
                      */
                     function () use ($actionsSource, $method) {
-                        return $this->callLogic($actionsSource, $method, []);
+                        return $this->callPublicLogic($actionsSource, $method, []);
                     },
                     'GET');
 
@@ -305,7 +349,7 @@ abstract class Transport implements TransportInterface
                      * @return mixed route processing result
                      */
                     function () use ($actionsSource, $method) {
-                        return $this->callLogic($actionsSource, $method, []);
+                        return $this->callPublicLogic($actionsSource, $method, []);
                     },
                     'POST');
             }
@@ -351,10 +395,10 @@ abstract class Transport implements TransportInterface
     /**
      * Method sets service logic
      *
-     * @param ServiceBaseLogicInterface $serviceLogic
+     * @param ServiceBaseLogic $serviceLogic
      *            base logic object or array
      */
-    public function setServiceLogic(ServiceBaseLogicInterface $serviceLogic): void
+    public function setServiceLogic(ServiceBaseLogic $serviceLogic): void
     {
         $this->serviceLogics = [
             $serviceLogic
@@ -364,10 +408,10 @@ abstract class Transport implements TransportInterface
     /**
      * Method adds service logic
      *
-     * @param ServiceBaseLogicInterface $serviceLogic
+     * @param ServiceBaseLogic $serviceLogic
      *            base logic object or array
      */
-    public function addServiceLogic(ServiceBaseLogicInterface $serviceLogic): void
+    public function addServiceLogic(ServiceBaseLogic $serviceLogic): void
     {
         $this->serviceLogics[] = $serviceLogic;
     }
@@ -375,7 +419,7 @@ abstract class Transport implements TransportInterface
     /**
      * Method sets service logic
      *
-     * @param ServiceBaseLogicInterface[] $serviceLogics
+     * @param ServiceBaseLogic[] $serviceLogics
      *            list of logic objects
      */
     public function setServiceLogics(array $serviceLogics): void

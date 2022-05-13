@@ -32,4 +32,14 @@ class FakeServiceLogic extends ServiceLogic
     {
         return 'test';
     }
+
+    public function publicLogic(): string
+    {
+        return 'public';
+    }
+
+    public function secureLogic(): string
+    {
+        return 'secure';
+    }
 }

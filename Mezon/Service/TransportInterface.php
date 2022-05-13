@@ -63,15 +63,15 @@ interface TransportInterface
     /**
      * Method fetches actions for routes
      *
-     * @param ServiceBaseLogicInterface $actionsSource
+     * @param ServiceBaseLogic $actionsSource
      *            source of actions
      */
-    public function fetchActions(ServiceBaseLogicInterface $actionsSource): void;
+    public function fetchActions(ServiceBaseLogic $actionsSource): void;
 
     /**
      * Method returns list of user logics
      *
-     * @return ServiceBaseLogicInterface[]
+     * @return ServiceBaseLogic[]
      */
     public function getServiceLogics(): array;
 }

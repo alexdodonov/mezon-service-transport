@@ -36,13 +36,28 @@ class CallLogiсExceptionUnitTest extends TestCase
     /**
      * Testing exception handling for callLogic
      */
-    public function testExceptionHandleForCallLogic(): void
+    public function testExceptionHandleForCallSecureLogic(): void
     {
         // setup
         $serviceTransport = new ConcreteServiceTransport();
 
         // test body
         $result = $serviceTransport->callLogic(new FakeServiceLogic(), 'some-method');
+
+        // assertions
+        $this->assertResult($result);
+    }
+
+    /**
+     * Testing exception handling for callLogic
+     */
+    public function testExceptionHandleForCallPublicLogic(): void
+    {
+        // setup
+        $serviceTransport = new ConcreteServiceTransport();
+
+        // test body
+        $result = $serviceTransport->callPublicLogic(new FakeServiceLogic(), 'some-method');
 
         // assertions
         $this->assertResult($result);
