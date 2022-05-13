@@ -1,7 +1,6 @@
 <?php
 namespace Mezon\Service\Tests;
 
-use Mezon\Security\MockProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
