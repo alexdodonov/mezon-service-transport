@@ -8,7 +8,7 @@ namespace Mezon\Service;
  * @subpackage ServiceTransportInterface
  * @author Dodonov A.A.
  * @version v.1.0 (2019/12/11)
- * @copyright Copyright (c) 2019, aeon.org
+ * @copyright Copyright (c) 2019, http://aeon.su
  */
 
 /**
@@ -63,10 +63,10 @@ interface TransportInterface
     /**
      * Method fetches actions for routes
      *
-     * @param ServiceBaseLogic $actionsSource
+     * @param ServiceActionsInterface $actionsSource
      *            source of actions
      */
-    public function fetchActions(ServiceBaseLogic $actionsSource): void;
+    public function fetchActions(ServiceActionsInterface $actionsSource): void;
 
     /**
      * Method returns list of user logics

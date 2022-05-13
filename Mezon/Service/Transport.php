@@ -13,7 +13,7 @@ use Mezon\System\Layer;
  * @subpackage ServiceTransport
  * @author Dodonov A.A.
  * @version v.1.0 (2019/08/17)
- * @copyright Copyright (c) 2019, aeon.org
+ * @copyright Copyright (c) 2019, http://aeon.su
  */
 
 /**
@@ -333,7 +333,7 @@ abstract class Transport implements TransportInterface
      * {@inheritdoc}
      * @see TransportInterface::fetchActions()
      */
-    public function fetchActions(ServiceBaseLogic $actionsSource): void
+    public function fetchActions(ServiceActionsInterface $actionsSource): void
     {
         $methods = get_class_methods($actionsSource);
 
@@ -349,21 +349,12 @@ abstract class Transport implements TransportInterface
                      * @return mixed route processing result
                      */
                     function () use ($actionsSource, $method) {
-                        return $this->callPublicLogic($actionsSource, $method, []);
+                        return $actionsSource->$method();
                     },
-                    'GET');
-
-                $this->router->addRoute(
-                    $route,
-                    /**
-                     * Route processing
-                     *
-                     * @return mixed route processing result
-                     */
-                    function () use ($actionsSource, $method) {
-                        return $this->callPublicLogic($actionsSource, $method, []);
-                    },
-                    'POST');
+                    [
+                        'GET',
+                        'POST'
+                    ]);
             }
         }
     }

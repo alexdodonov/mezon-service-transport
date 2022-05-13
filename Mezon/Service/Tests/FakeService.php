@@ -1,22 +1,15 @@
 <?php
 namespace Mezon\Service\Tests;
 
-use Mezon\Service\ServiceBaseLogic;
-use Mezon\Transport\Tests\MockParamsFetcher;
-use Mezon\Security\MockProvider;
+use Mezon\Service\ServiceActionsInterface;
 
 /**
  * Tests for the class ServiceTransport
  *
  * @codeCoverageIgnore
  */
-class FakeService extends ServiceBaseLogic
+class FakeService implements ServiceActionsInterface
 {
-
-    public function __construct()
-    {
-        parent::__construct(new MockParamsFetcher(), new MockProvider());
-    }
 
     public function actionHelloWorld(): int
     {
