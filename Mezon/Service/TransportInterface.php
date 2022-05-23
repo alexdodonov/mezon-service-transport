@@ -28,8 +28,10 @@ interface TransportInterface
      *            logic method to be called
      * @param string|array $requestMethod
      *            HTTP request method
+     * @param string $callType
+     *            type of the call
      */
-    public function addRoute(string $route, string $callback, $requestMethod): void;
+    public function addRoute(string $route, string $callback, $requestMethod, string $callType = 'callLogic'): void;
 
     /**
      * Method loads routes
