@@ -18,7 +18,7 @@
 		"php": ">=7.2.0",
 		"mezon/router": "1.3.*",
 		"mezon/request-params": "1.0.*",
-		"mezon/service-logic": "1.2.*",
+		"mezon/service-logic": "1.3.*",
 		"mezon/infrastructure-layer": "1.2.*"
 	},
 	"support": {
